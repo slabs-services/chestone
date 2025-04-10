@@ -1,0 +1,9 @@
+services:
+  objectsserver:
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - "objects:/usr/share/nginx/objects"
+volumes:
+  objects:

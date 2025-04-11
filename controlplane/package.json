@@ -1,0 +1,12 @@
+{
+  "name": "objects-controlplane",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "fastify": "^5.2.2"
+  },
+  "scripts": {
+    "dev": "node src/server.js"
+  }
+}

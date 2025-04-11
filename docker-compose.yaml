@@ -1,9 +1,14 @@
 services:
-  objectsserver:
-    build: .
+  delivery:
+    build: delivery/.
     ports:
       - "80:80"
     volumes:
       - "objects:/usr/share/nginx/objects"
+  controlplane:
+    build: controlplane/.
+    ports:
+      - "8080:8080"
+    command: npm run dev
 volumes:
   objects:

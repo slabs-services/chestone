@@ -5,10 +5,46 @@ services:
       - "80:80"
     volumes:
       - "objects:/usr/share/nginx/objects"
-  controlplane:
-    build: controlplane/.
+    networks:
+      external:
+        ipv4_address: 192.168.1.11
+  controlplane-api:
+    build: controlplane-api/.
+    depends_on:
+      database:
+        condition: service_healthy
+  controlplane-gw:
+    build: controlplane-gw/.
+    depends_on:
+      controlplane-api:
+        condition: service_healthy
     ports:
-      - "8080:8080"
-    command: npm run dev
+      - "80:80"
+    networks:
+      external:
+        ipv4_address: 192.168.1.12
+  database:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "--password=${MYSQL_ROOT_PASSWORD}"]
+      retries: 5
+      interval: 3s
+      timeout: 5s
 volumes:
   objects:
+  db:
+networks:
+  external:
+    driver: macvlan
+    driver_opts:
+      parent: eth0
+    ipam:
+      config:
+        - subnet: 192.168.1.0/24
+          gateway: 192.168.1.254
+  bridge:
+    driver: bridge
